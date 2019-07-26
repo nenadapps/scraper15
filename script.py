@@ -13,14 +13,13 @@ def get_html(url):
         req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         html_page = urlopen(req).read()
         html_content = BeautifulSoup(html_page, "html.parser")
-    except Exception as e: 
-        print(e)
+    except: 
         pass
 
     return html_content
 
 def get_page_items(url):
-
+    
     items = []
     next_url = ''
 
@@ -37,15 +36,15 @@ def get_page_items(url):
         pass
 
     try:
-        next_items = html.select('p span a')
+        next_items = html.select('p.center a')
         for next_item in next_items:
             next_item_text = next_item.get_text().strip()
             if 'Next' in next_item_text:
-                next_url = 'https://www.cherrystonestamps.com/' + next_item.get('href')
+                next_url = 'https://www.cherrystonestamps.com/' + next_item.get('href').replace('®', '&reg')
                 break
     except:
         pass
-
+    
     shuffle(items)
 
     return items, next_url
@@ -143,12 +142,11 @@ def get_details(html):
 
     print(stamp)
     print('+++++++++++++')
-    #sleep(randint(25, 65))
+    sleep(randint(25, 65))
     return stamp
 
 # loop through all categories
 categories = get_categories()
-print(categories)
 for category in categories:
     while(category):
         page_items, category = get_page_items(category)
