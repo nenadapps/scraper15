@@ -46,7 +46,6 @@ def get_page_items(url):
         pass
     
     shuffle(items)
-
     return items, next_url
 
 def get_categories():
@@ -65,7 +64,7 @@ def get_categories():
                 items.append(item_url)
     except: 
         pass
-
+	shuffle(items)
     return items
 
 def get_details(html):
@@ -98,7 +97,8 @@ def get_details(html):
         cat_parts = cat_temp.split('Cat. Val. ')
         cat_value = cat_parts[1].strip()
         scott_num = cat_parts[0].strip()
-        stamp['scott_num'] = scott_num.replace('Cat.', '').strip()
+        temp = scott_num.replace('Cat.', '').strip()
+        stamp['scott_num']= temp.replace('#','')
         stamp['cat_value'] = cat_value
     except:
         stamp['scott_num'] = None 
@@ -115,9 +115,20 @@ def get_details(html):
             raw_text_parts = td1.decode().split('</strong>')
             raw_text_html = raw_text_parts[-1]
             raw_text = BeautifulSoup(raw_text_html, "html.parser").get_text()
-            stamp['raw_text'] = raw_text
+            stamp['raw_text'] = raw_text.replace('"',"'")
     except: 
         stamp['raw_text'] = None
+        
+    if 'set' in stamp['raw_text']:
+    	stamp['set']=1
+    else:
+    	stamp['set']=0
+    
+    try:
+    	temp = stamp['raw_text'].split(' ')
+    	stamp['year']=temp[0]
+    except:
+    	stamp['year']=None
         
     stamp['currency'] = 'USD'
     
